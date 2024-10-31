@@ -28,6 +28,10 @@ const Button = styled.button`
   }
 `;
 
+const TestButton = styled(Button)`
+  color: black;
+`
+
 function TodoInput({ addTodo }) {
   const [input, setInput] = useState('');
 
@@ -48,6 +52,7 @@ function TodoInput({ addTodo }) {
         placeholder="Add a new todo"
       />
       <Button onClick={handleSubmit}>Add</Button>
+      <TestButton>Test</TestButton>
     </InputContainer>
   );
 }

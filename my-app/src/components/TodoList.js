@@ -39,6 +39,14 @@ const Button = styled.button`
   }
 `;
 
+const ReactButton = props => {
+  return <button className={props.className}>{props.children}</button>
+};
+
+const ReactLargeButton = styled(ReactButton)`
+  font-size: 50px;
+`;
+
 function TodoList({ todos, toggleTodo, removeTodo }) {
   return (
     <ListContainer>
@@ -46,7 +54,7 @@ function TodoList({ todos, toggleTodo, removeTodo }) {
         <ListItem key={index} completed={todo.completed}>
           <TodoText onClick={() => toggleTodo(index)}>{todo.text}</TodoText>
           <Button onClick={() => toggleTodo(index)}>
-            {todo.completed ? 'Undo' : 'Complete'}
+            {todo.completed ? 'Success' : 'check'}
           </Button>
           <Button delete onClick={() => removeTodo(index)}>
             Delete
