@@ -1,6 +1,19 @@
 import React, { useState } from 'react';
+import styled from 'styled-components';
 import TodoInput from './components/TodoInput';
 import TodoList from './components/TodoList';
+
+const AppContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+`;
+
+const Title = styled.h1`
+  font-size: 2rem;
+  color: #333;
+`;
 
 function App() {
   const [todos, setTodos] = useState([]);
@@ -22,11 +35,11 @@ function App() {
   };
 
   return (
-    <div>
-      <h1>Todo List</h1>
+    <AppContainer>
+      <Title>Todo List</Title>
       <TodoInput addTodo={addTodo} />
       <TodoList todos={todos} toggleTodo={toggleTodo} removeTodo={removeTodo} />
-    </div>
+    </AppContainer>
   );
 }
 
