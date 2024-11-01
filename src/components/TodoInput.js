@@ -32,13 +32,13 @@ const TestButton = styled(Button)`
   color: black;
 `
 
-function TodoInput({ addTodo }) {
+function TodoInput({ test }) {
   const [input, setInput] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (input) {
-      addTodo(`입력 내용 : ${input}`);
+      test(`입력 내용 : ${input}`);
       setInput('');
     }
   };
