@@ -1,5 +1,37 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+
+// 서버에서 Todo 목록을 가져오는 함수
+const fetchTodos = async () => {
+  const response = await fetch('/api/todos');  // 실제 API URL로 대체
+  if (!response.ok) {
+    throw new Error('Network response was not ok');
+  }
+  return response.json();
+};
+
+// Todo 항목을 업데이트하는 함수
+const updateTodo = async (id) => {
+  const response = await fetch(`/api/todos/${id}`, {
+    method: 'PATCH',
+  });
+  if (!response.ok) {
+    throw new Error('Failed to update todo');
+  }
+  return response.json();
+};
+
+// Todo 항목을 삭제하는 함수
+const deleteTodo = async (id) => {
+  const response = await fetch(`/api/todos/${id}`, {
+    method: 'DELETE',
+  });
+  if (!response.ok) {
+    throw new Error('Failed to delete todo');
+  }
+  return id;
+};
 
 const ListContainer = styled.ul`
   list-style-type: none;
@@ -39,24 +71,38 @@ const Button = styled.button`
   }
 `;
 
-const ReactButton = props => {
-  return <button className={props.className}>{props.children}</button>
-};
+function TodoList() {
+  const queryClient = useQueryClient();
 
-const ReactLargeButton = styled(ReactButton)`
-  font-size: 50px;
-`;
+  // useQuery를 사용하여 서버에서 Todo 목록을 가져옵니다.
+  const { data: todos, isLoading, error } = useQuery(['todos'], fetchTodos);
 
-function TodoList({ todos, toggleTodo, removeTodo }) {
+  const mutationUpdate = useMutation(updateTodo, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(['todos']);  // Todo 업데이트 후 캐시된 데이터를 새로 고침
+    },
+  });
+
+  const mutationDelete = useMutation(deleteTodo, {
+    onSuccess: (id) => {
+      queryClient.invalidateQueries(['todos']);  // Todo 삭제 후 캐시된 데이터를 새로 고침
+    },
+  });
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
+
   return (
     <ListContainer>
-      {todos.map((todo, index) => (
-        <ListItem key={index} completed={todo.completed}>
-          <TodoText onClick={() => toggleTodo(index)}>{todo.text}</TodoText>
-          <Button onClick={() => toggleTodo(index)}>
+      {todos.map((todo) => (
+        <ListItem key={todo.id} completed={todo.completed}>
+          <TodoText onClick={() => mutationUpdate.mutate(todo.id)}>
+            {todo.text}
+          </TodoText>
+          <Button onClick={() => mutationUpdate.mutate(todo.id)}>
             {todo.completed ? 'Success' : 'check'}
           </Button>
-          <Button delete onClick={() => removeTodo(index)}>
+          <Button delete onClick={() => mutationDelete.mutate(todo.id)}>
             Delete
           </Button>
         </ListItem>

@@ -1,21 +1,5 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-
-// 서버에 Todo를 추가하는 함수
-const addTodo = async (newTodo) => {
-  const response = await fetch('/api/todos', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ text: newTodo, completed: false }),
-  });
-  if (!response.ok) {
-    throw new Error('Failed to add todo');
-  }
-  return response.json();
-};
 
 const InputContainer = styled.div`
   display: flex;
@@ -44,19 +28,17 @@ const Button = styled.button`
   }
 `;
 
-function TodoInput() {
+const TestButton = styled(Button)`
+  color: black;
+`
+
+function TodoInput({ test }) {
   const [input, setInput] = useState('');
-  const queryClient = useQueryClient();
-  const mutation = useMutation(addTodo, {
-    onSuccess: () => {
-      queryClient.invalidateQueries(['todos']);  // Todo 추가 후 캐시된 데이터를 새로 고침
-    },
-  });
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (input) {
-      mutation.mutate(input);
+      test(`입력 내용 : ${input}`);
       setInput('');
     }
   };
@@ -70,6 +52,7 @@ function TodoInput() {
         placeholder="Add a new todo"
       />
       <Button onClick={handleSubmit}>Add</Button>
+      <TestButton>Test</TestButton>
     </InputContainer>
   );
 }
