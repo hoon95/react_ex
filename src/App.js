@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import TodoInput from './components/TodoInput';
 import TodoList from './components/TodoList';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 // React Query의 QueryClient 생성
 const queryClient = new QueryClient();
@@ -27,6 +28,7 @@ export const App = () => {
         <TodoInput />
         <TodoList />
       </AppContainer>
+      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
 }

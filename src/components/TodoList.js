@@ -75,19 +75,42 @@ function TodoList() {
   const queryClient = useQueryClient();
 
   // useQuery를 사용하여 서버에서 Todo 목록을 가져옵니다.
-  const { data: todos, isLoading, error } = useQuery(['todos'], fetchTodos);
+  
+  /*
+    v5 migration : useQuery, useMutation의 인자 형식(query 관련 함수 : 객체 형식만 허용)
+    ['todos'] 대신 객체 형식 사용
+  */
 
-  const mutationUpdate = useMutation(updateTodo, {
+  // useQuery v5 migration
+  // const { data: todos, isLoading, error } = useQuery(['todos'], fetchTodos);
+  const { data: todos, isLoading, error } = useQuery({
+    queryKey: ['todos'],
+    queryFn: fetchTodos,
+  })
+
+  // useMutation migration
+  // const mutationUpdate = useMutation(updateTodo, {
+  //   onSuccess: () => {
+  //     queryClient.invalidateQueries(['todos']);  // Todo 업데이트 후 캐시된 데이터를 새로 고침
+  //   },
+  // });
+  // const mutationDelete = useMutation(deleteTodo, {
+  //   onSuccess: (id) => {
+  //     queryClient.invalidateQueries(['todos']);  // Todo 삭제 후 캐시된 데이터를 새로 고침
+  //   },
+  // });
+  const mutationUpdate = useMutation({
+    mutationFn: updateTodo,
     onSuccess: () => {
-      queryClient.invalidateQueries(['todos']);  // Todo 업데이트 후 캐시된 데이터를 새로 고침
+      queryClient.invalidateQueries(['todos']);   // Todo 업데이트 후 캐시된 데이터를 새로고침
     },
-  });
-
-  const mutationDelete = useMutation(deleteTodo, {
-    onSuccess: (id) => {
-      queryClient.invalidateQueries(['todos']);  // Todo 삭제 후 캐시된 데이터를 새로 고침
-    },
-  });
+  })
+  const mutationDelete = useMutation({
+    mutationFn: deleteTodo,
+    onSuccess: () => {
+      queryClient.invalidateQueries(['todos']);   // Todo 삭제 후 캐시된 데이터를 새로고침
+    }
+  })
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
