@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 // 서버에서 Todo 목록을 가져오는 함수
 const fetchTodos = async () => {
-  const response = await fetch('/api/todos');  // 실제 API URL로 대체
+  const response = await fetch('http://localhost:3001/api/todos');
   if (!response.ok) {
     throw new Error('Network response was not ok');
   }
@@ -13,7 +13,7 @@ const fetchTodos = async () => {
 
 // Todo 항목을 업데이트하는 함수
 const updateTodo = async (id) => {
-  const response = await fetch(`/api/todos/${id}`, {
+  const response = await fetch(`http://localhost:3001/api/todos/${id}`, {
     method: 'PATCH',
   });
   if (!response.ok) {
@@ -24,7 +24,7 @@ const updateTodo = async (id) => {
 
 // Todo 항목을 삭제하는 함수
 const deleteTodo = async (id) => {
-  const response = await fetch(`/api/todos/${id}`, {
+  const response = await fetch(`http://localhost:3001/api/todos/${id}`, {
     method: 'DELETE',
   });
   if (!response.ok) {
@@ -83,7 +83,7 @@ function TodoList() {
 
   // useQuery v5 migration
   // const { data: todos, isLoading, error } = useQuery(['todos'], fetchTodos);
-  const { data: todos, isLoading, error } = useQuery({
+  const { data: todos = [], isLoading, error } = useQuery({
     queryKey: ['todos'],
     queryFn: fetchTodos,
   })

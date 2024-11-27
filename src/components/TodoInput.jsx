@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 // 서버에 Todo를 추가하는 함수
 const addTodo = async (newTodo) => {
-  const response = await fetch('/api/todos', {
+  const response = await fetch('http://localhost:3001/api/todos', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -47,11 +47,17 @@ const Button = styled.button`
 function TodoInput() {
   const [input, setInput] = useState('');
   const queryClient = useQueryClient();
-  const mutation = useMutation(addTodo, {
+  // const mutation = useMutation(addTodo, {
+  //   onSuccess: () => {
+  //     queryClient.invalidateQueries(['todos']);  // Todo 추가 후 캐시된 데이터를 새로 고침
+  //   },
+  // });
+  const mutation = useMutation({
+    mutationFn: addTodo,
     onSuccess: () => {
-      queryClient.invalidateQueries(['todos']);  // Todo 추가 후 캐시된 데이터를 새로 고침
+      queryClient.invalidateQueries(['todos']);
     },
-  });
+  })
 
   const handleSubmit = (e) => {
     e.preventDefault();
